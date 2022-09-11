@@ -16,6 +16,7 @@ const App = () => {
   //console.log(points)
   const [selected, setSelected] = useState(0)
   const [points, setPoints] = useState(Array(anecdotes.length).fill(0))
+  const [selectedmax, setSelectedmax] = useState(0)
 
   const handleRandomClick = () => {
     const randomNumber = Math.floor(Math.random() * (6 - 0 + 1)) + 0
@@ -26,17 +27,41 @@ const App = () => {
     const copy = [...points]
     copy[selected] += 1
     setPoints(copy)
+    setSelectedmax(indexOfMax(copy))
   }
+
+  function indexOfMax(arr) {
+    if (arr.length === 0) {
+        return -1;
+    }
+
+    let max = arr[0];
+    let maxIndex = 0;
+
+    for (let i = 1; i < arr.length; i++) {
+        if (arr[i] > max) {
+            maxIndex = i;
+            max = arr[i];
+        }
+    }
+
+    return maxIndex;
+}
 
 
   return (
     <div>
+      <h2>Anecdote of the day</h2>
       {anecdotes[selected]}
       <br></br>
-      This anecdote has {points[selected]}
+      This anecdote has {points[selected]} votes.
       <br></br>
       <Button handleClick={handleVoteClick} text='Vote' />
       <Button handleClick={handleRandomClick} text='Next anecdote' />
+
+      <h2>Anecdote with most votes</h2>
+      {anecdotes[selectedmax]}
+
     </div>
   )
 }
