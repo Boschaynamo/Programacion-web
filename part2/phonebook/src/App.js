@@ -4,11 +4,11 @@ const App = () => {
   const [persons, setPersons] = useState([
     {
       name: 'Arto Hellas'
-    },   
+    },
     {
       name: 'Ada Lovelace'
     }
-    
+
   ])
   const [newName, setNewName] = useState('')
 
@@ -18,12 +18,21 @@ const App = () => {
 
   const addName = (event) => {
     event.preventDefault()
-    const nameObject ={
+    const nameObject = {
       name: newName,
     }
- //   if()
-    setPersons(persons.concat(nameObject))
-    setNewName('')
+    let isWritten = false
+
+    isWritten = persons.filter((person) => {
+      return newName===person.name
+    })
+    if (isWritten == false) {
+      setPersons(persons.concat(nameObject))
+      setNewName('')
+    } else {
+      alert(`${newName} has already been added!`)
+    }
+
   }
 
   return (
