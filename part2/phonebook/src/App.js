@@ -14,6 +14,8 @@ const App = () => {
   ])
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
+  const [newNameFilter, setNewNameFilter] = useState('')
+  
 
   const handleNameChange = (event) => {
     setNewName(event.target.value)
@@ -22,6 +24,11 @@ const App = () => {
   const handleNumberChange = (event) => {
     setNewNumber(event.target.value)
   }
+
+  const handleNameFilterChange = (event) => {
+    setNewNameFilter(event.target.value)
+  }
+
 
   const addData = (event) => {
     event.preventDefault()
@@ -39,7 +46,7 @@ const App = () => {
       setPersons(persons.concat(nameObject))
       setNewName('')
       setNewNumber('')
-      
+
     } else {
       alert(`${newName} has already been added!`)
     }
@@ -51,6 +58,10 @@ const App = () => {
       <h2>Phonebook</h2>
       <form onSubmit={addData}>
         <div>
+          filter shown with: <input value={newNameFilter} onChange={handleNameFilterChange} />
+        </div>
+        <h2>Add a new person</h2>
+        <div>
           name: <input value={newName} onChange={handleNameChange} />
         </div>
         <div>
@@ -61,7 +72,11 @@ const App = () => {
         </div>
       </form>
       <h2>Numbers</h2>
-      {persons.map((person) => <div key={person.name}> {person.name} {person.number}</div>)}
+      {persons.map((person) => {
+        if(person.name.toLowerCase().startsWith(newNameFilter.toLowerCase()))
+          return(<div key={person.name}> {person.name} {person.number}</div>)
+      }
+      )}
     </div>
   )
 }
