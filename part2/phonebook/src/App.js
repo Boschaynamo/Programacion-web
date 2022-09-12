@@ -3,11 +3,12 @@ import { useState } from 'react'
 const App = () => {
   const [persons, setPersons] = useState([
     {
-      name: 'Arto Hellas',
-    },
+      name: 'Arto Hellas'
+    },   
     {
-      name: 'Ada Lovelace',
+      name: 'Ada Lovelace'
     }
+    
   ])
   const [newName, setNewName] = useState('')
 
@@ -20,6 +21,7 @@ const App = () => {
     const nameObject ={
       name: newName,
     }
+ //   if()
     setPersons(persons.concat(nameObject))
     setNewName('')
   }
