@@ -1,10 +1,13 @@
-const Course = ({course}) => {
-  return(
+function Course({ course }) {
+  return (
     <div>
       <h1>{course.name}</h1>
-      {course.parts.map(part => 
+      {course.parts.map(part =>
         <p key={part.id} >{part.name} {part.exercises}</p>
       )}
+      <h4>
+        Total of exercises {course.parts.reduce((sum, part) => sum + part.exercises, 0)}
+      </h4>
     </div>
   )
 }
@@ -28,6 +31,16 @@ const App = () => {
         name: 'State of a component',
         exercises: 14,
         id: 3
+      },
+      {
+        name: 'Redux',
+        exercises: 11,
+        id: 4
+      },
+      {
+        name: 'More',
+        exercises: 10,
+        id: 5
       }
     ]
   }
