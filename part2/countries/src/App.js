@@ -1,56 +1,23 @@
 import { useState, useEffect } from 'react'
 import axios from 'axios'
 
-const Filter = ({ text, filterInputValue, onChange }) => {
-  return (
-    <div>{text} <input value={filterInputValue} onChange={onChange} /></div>
-  )
-}
+import ShowCountry from './Components/ShowCountry'
+import ShowCountries from './Components/ShowCountries'
 
-const FilterResult = ({ countriesData, countriesFilterInput }) => {
-  const filteredCountries = countriesData
-    .filter(country =>
-      country.name.common.toLowerCase().includes(countriesFilterInput.toLowerCase())
-    )
-
-  //console.log(filteredCountries)
-
-  if (filteredCountries.length > 10)
-    return <div>Too many results, be more specific</div>
-  if (filteredCountries.length <= 10 & filteredCountries.length !== 1)
-    return (filteredCountries.map((country) => <div key={country.name.common}>{country.name.common}</div>))
-
-  //console.log(filteredCountries)
-  return (
-    <div key={filteredCountries[0].name.common}>
-      <h1>{filteredCountries[0].name.common}</h1>
-      <p>Capital:{filteredCountries[0].capital}</p>
-      <p>Area:{filteredCountries[0].area}</p>
-
-      <h2>Languages</h2>
-      <ul>
-        {Object.values(filteredCountries[0].languages).map((Language) => {
-          return (<li key={Language}>  {Language}</li>)
-        })}
-      </ul>
-      <h2>Flag</h2> 
-      <img src={filteredCountries[0].flags.svg} alt='No hay bandera'/>
-    </div>
-  )
-
-
-}
+const Filter = ({ text, filterInputValue, onChange }) => <div>{text} <input value={filterInputValue} onChange={onChange} /></div>
 
 function App() {
 
+  //definiciones useState
   const [countriesFilterInput, setCountriesFilterInput] = useState('')
-  //const [countriesResult,setCountriesResult] = useState([])
+  const [countries, setCountries] = useState([])
 
+  //handlers
   const handleFilterInputChange = (event) => {
     setCountriesFilterInput(event.target.value)
   }
 
-  const [countries, setCountries] = useState([])
+  //obtener datos de la api
   useEffect(() => {
     axios
       .get('https://restcountries.com/v3.1/all')
@@ -61,16 +28,24 @@ function App() {
   },
     [])
 
-
-
+  // guardo los paises filtrados antes del return
+  
+    const filteredCountries = countries
+    .filter(country =>
+      country.name.common.toLowerCase().includes(countriesFilterInput.toLowerCase())
+    )
 
 
   return (
     <div>
       <Filter text='Find countries' filterInputValue={countriesFilterInput} onChange={handleFilterInputChange} />
-      <FilterResult countriesData={countries} countriesFilterInput={countriesFilterInput} />
+      {/*<FilterResult countriesData={countries} countriesFilterInput={countriesFilterInput} />*/}
+      {filteredCountries.length===1 ? 
+        <ShowCountry country={filteredCountries[0]}/> 
+        : filteredCountries.length>10 ? 
+          <div>Too many countries to show, be more specific</div> 
+          : <ShowCountries countries={filteredCountries} buttonOnClick={(x) => setCountriesFilterInput(x)} />}
     </div>
-
   );
 }
 
