@@ -12,12 +12,13 @@ function App() {
   const [countriesFilterInput, setCountriesFilterInput] = useState('')
   const [countries, setCountries] = useState([])
 
+
   //handlers
   const handleFilterInputChange = (event) => {
     setCountriesFilterInput(event.target.value)
   }
 
-  //obtener datos de la api
+  //obtener datos de la api country
   useEffect(() => {
     axios
       .get('https://restcountries.com/v3.1/all')
