@@ -2,35 +2,33 @@ import { useState, useEffect } from 'react'
 import axios from 'axios'
 
 
-const Filter = ({inputValue, onChangeValue, text}) => <div>{text} <input value={inputValue} onChange={onChangeValue} /></div>
+const Filter = ({ inputValue, onChangeValue, text }) => <div>{text} <input value={inputValue} onChange={onChangeValue} /></div>
 
-const PersonForm = ({onFormSubmit, onNameChange, nameInputValue, onNumberChange, numberInputValue, buttonText}) =>{
-  return(
+const PersonForm = ({ onFormSubmit, onNameChange, nameInputValue, onNumberChange, numberInputValue, buttonText }) => {
+  return (
     <div>
-    <form onSubmit={onFormSubmit}>
-      <div> Name <input value={nameInputValue} onChange={onNameChange} /></div>
+      <form onSubmit={onFormSubmit}>
+        <div> Name <input value={nameInputValue} onChange={onNameChange} /></div>
 
-      <div> Number <input value={numberInputValue} onChange={onNumberChange} /></div>
-      <div>
-        <button type="submit">{buttonText}</button>
-      </div>
+        <div> Number <input value={numberInputValue} onChange={onNumberChange} /></div>
+        <div>
+          <button type="submit">{buttonText}</button>
+        </div>
 
-    </form>
+      </form>
     </div>
   )
 }
 
-const RenderPersons = ({persons,stringFilter})=>{
-  return(
-    persons.map((person) => {
-      if(person.name.toLowerCase().startsWith(stringFilter.toLowerCase()))
-        return(<RenderPerson key={person.name} name={person.name} number={person.number}/>)
-    }
+const RenderPersons = ({ persons, stringFilter }) => {
+  return (
+    persons.map((person) => 
+      person.name.toLowerCase().startsWith(stringFilter.toLowerCase())? <RenderPerson key={person.name} name={person.name} number={person.number} /> : null
     )
   )
 }
 
-const RenderPerson = ({name, number}) => <div> {name} {number}</div>
+const RenderPerson = ({ name, number }) => <div> {name} {number}</div>
 
 const App = () => {
 
@@ -44,12 +42,12 @@ const App = () => {
         console.log('promise fulfilled')
         setPersons(response.data)
       })
-    },
-  [])
+  },
+    [])
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [newNameFilter, setNewNameFilter] = useState('')
-  
+
 
   const handleNameChange = (event) => {
     setNewName(event.target.value)
@@ -81,6 +79,12 @@ const App = () => {
       setNewName('')
       setNewNumber('')
 
+      axios
+        .post('http://localhost:3001/persons', nameObject)
+        .then(response => {
+          console.log(response)
+        })
+
     } else {
       alert(`${newName} has already been added!`)
     }
@@ -92,13 +96,13 @@ const App = () => {
       <h2>Phonebook</h2>
       <Filter inputValue={newNameFilter} onChangeValue={handleNameFilterChange} text={"Filter shown with:"} />
       <h2>Add a new person</h2>
-      <PersonForm 
+      <PersonForm
         onFormSubmit={addDataToList}
         onNameChange={handleNameChange}
         nameInputValue={newName}
         onNumberChange={handleNumberChange}
         numberInputValue={newNumber}
-        buttonText='Add'/>  
+        buttonText='Add' />
       <h2>Numbers</h2>
       <RenderPersons persons={persons} stringFilter={newNameFilter} />
     </div>
