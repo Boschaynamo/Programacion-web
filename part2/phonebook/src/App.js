@@ -31,7 +31,7 @@ const RenderPersons = ({ persons, stringFilter, buttonOnClick }) => {
 }
 
 const RenderPerson = ({ person, buttonOnClick }) => 
-  <div> {person.name} {person.number} <button onClick={()=>buttonOnClick(person.id)}>Delete</button> </div>
+  <div> {person.name} {person.number} <button onClick={()=>buttonOnClick(person.id, person.name)}>Delete</button> </div>
 
 
 
@@ -64,10 +64,17 @@ const App = () => {
     setNewNameFilter(event.target.value)
   }
 
-  const handleDeleteClick = (id) => {
-    phonebookService
-      .deletear(id)
-      .then(response => console.log(response))
+  const handleDeleteClick = (id, name) => {
+
+    if(window.confirm(`Delete ${name}?`))
+      {
+        phonebookService
+          .deletear(id)
+          .then(response => console.log(response))
+
+          setPersons(persons.filter((person) => person.id !== id))
+      }
+
   }
 
   const addDataToList = (event) => {
