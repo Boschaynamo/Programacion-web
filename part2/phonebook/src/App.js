@@ -20,15 +20,20 @@ const PersonForm = ({ onFormSubmit, onNameChange, nameInputValue, onNumberChange
   )
 }
 
-const RenderPersons = ({ persons, stringFilter }) => {
+const RenderPersons = ({ persons, stringFilter, buttonOnClick }) => {
   return (
     persons.map((person) => 
-      person.name.toLowerCase().startsWith(stringFilter.toLowerCase())? <RenderPerson key={person.name} name={person.name} number={person.number} /> : null
+      person.name.toLowerCase().startsWith(stringFilter.toLowerCase()) ? 
+        <RenderPerson key={person.name} person={person} buttonOnClick={buttonOnClick} /> 
+        : null
     )
   )
 }
 
-const RenderPerson = ({ name, number }) => <div> {name} {number}</div>
+const RenderPerson = ({ person, buttonOnClick }) => 
+  <div> {person.name} {person.number} <button onClick={()=>buttonOnClick(person.id)}>Delete</button> </div>
+
+
 
 const App = () => {
 
@@ -59,6 +64,11 @@ const App = () => {
     setNewNameFilter(event.target.value)
   }
 
+  const handleDeleteClick = (id) => {
+    phonebookService
+      .deletear(id)
+      .then(response => console.log(response))
+  }
 
   const addDataToList = (event) => {
     event.preventDefault()
@@ -100,7 +110,7 @@ const App = () => {
         numberInputValue={newNumber}
         buttonText='Add' />
       <h2>Numbers</h2>
-      <RenderPersons persons={persons} stringFilter={newNameFilter} />
+      <RenderPersons persons={persons} stringFilter={newNameFilter} buttonOnClick={handleDeleteClick}  />
     </div>
   )
 }
