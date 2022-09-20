@@ -22,16 +22,16 @@ const PersonForm = ({ onFormSubmit, onNameChange, nameInputValue, onNumberChange
 
 const RenderPersons = ({ persons, stringFilter, buttonOnClick }) => {
   return (
-    persons.map((person) => 
-      person.name.toLowerCase().startsWith(stringFilter.toLowerCase()) ? 
-        <RenderPerson key={person.name} person={person} buttonOnClick={buttonOnClick} /> 
+    persons.map((person) =>
+      person.name.toLowerCase().startsWith(stringFilter.toLowerCase()) ?
+        <RenderPerson key={person.name} person={person} buttonOnClick={buttonOnClick} />
         : null
     )
   )
 }
 
-const RenderPerson = ({ person, buttonOnClick }) => 
-  <div> {person.name} {person.number} <button onClick={()=>buttonOnClick(person.id, person.name)}>Delete</button> </div>
+const RenderPerson = ({ person, buttonOnClick }) =>
+  <div> {person.name} {person.number} <button onClick={() => buttonOnClick(person.id, person.name)}>Delete</button> </div>
 
 
 
@@ -42,9 +42,9 @@ const App = () => {
   useEffect(() => {
     phonebookService
       .getAll()
-      .then(response => 
-      setPersons(response.data))
-    },
+      .then(response =>
+        setPersons(response.data))
+  },
     [])
 
   const [newName, setNewName] = useState('')
@@ -66,14 +66,13 @@ const App = () => {
 
   const handleDeleteClick = (id, name) => {
 
-    if(window.confirm(`Delete ${name}?`))
-      {
-        phonebookService
-          .deletear(id)
-          .then(response => console.log(response))
+    if (window.confirm(`Delete ${name}?`)) {
+      phonebookService
+        .deletear(id)
+        .then(response => console.log(response))
 
-          setPersons(persons.filter((person) => person.id !== id))
-      }
+      setPersons(persons.filter((person) => person.id !== id))
+    }
 
   }
 
@@ -86,20 +85,25 @@ const App = () => {
 
     let isWritten = false
 
-    isWritten = persons.filter((person) => {
-      return newName === person.name
-    })
-    if (isWritten == false) {
+    isWritten = persons.find((person) => newName === person.name)
+    if (isWritten === false) {
       setPersons(persons.concat(nameObject))
       setNewName('')
       setNewNumber('')
 
       phonebookService
-      .create(nameObject)
-      .then(response => console.log(response))
+        .create(nameObject)
+        .then(response => console.log(response))
 
     } else {
-      alert(`${newName} has already been added!`)
+      if (window.confirm(`${newName} is already added to phonebook, do you want to replace the old number with the new one?!`)) {
+
+        phonebookService
+          .update(isWritten.id, nameObject)
+          .then(response => setPersons(persons.map(p => p.id !== isWritten.id ? p : response.data)))
+
+        //setPersons(changedperson)
+      }
     }
 
   }
@@ -117,7 +121,7 @@ const App = () => {
         numberInputValue={newNumber}
         buttonText='Add' />
       <h2>Numbers</h2>
-      <RenderPersons persons={persons} stringFilter={newNameFilter} buttonOnClick={handleDeleteClick}  />
+      <RenderPersons persons={persons} stringFilter={newNameFilter} buttonOnClick={handleDeleteClick} />
     </div>
   )
 }
