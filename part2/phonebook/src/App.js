@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import phonebookService from './services/persons'
+import Notification from './components/Notification'
 
 
 const Filter = ({ inputValue, onChangeValue, text }) => <div>{text} <input value={inputValue} onChange={onChangeValue} /></div>
@@ -23,7 +24,7 @@ const PersonForm = ({ onFormSubmit, onNameChange, nameInputValue, onNumberChange
 const RenderPersons = ({ persons, stringFilter, buttonOnClick }) => {
   return (
     persons.map((person) =>
-      person.name.toLowerCase().startsWith(stringFilter.toLowerCase()) ?
+      person.name.toLowerCase().includes(stringFilter.toLowerCase()) ?
         <RenderPerson key={person.name} person={person} buttonOnClick={buttonOnClick} />
         : null
     )
@@ -50,6 +51,7 @@ const App = () => {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [newNameFilter, setNewNameFilter] = useState('')
+  const [message, setMessage] = useState(null)
 
 
   const handleNameChange = (event) => {
@@ -83,13 +85,17 @@ const App = () => {
       number: newNumber
     }
 
-    let isWritten = false
+    let isWritten = null;
 
     isWritten = persons.find((person) => newName === person.name)
-    if (isWritten === false) {
+    if (isWritten == null) {
       setPersons(persons.concat(nameObject))
       setNewName('')
       setNewNumber('')
+      setMessage(`Added ${nameObject.name}`)
+      setTimeout(() => {
+        setMessage(null)
+      }, 5000)
 
       phonebookService
         .create(nameObject)
@@ -100,9 +106,21 @@ const App = () => {
 
         phonebookService
           .update(isWritten.id, nameObject)
-          .then(response => setPersons(persons.map(p => p.id !== isWritten.id ? p : response.data)))
+          .then(response =>{
+            setPersons(persons.map(p => p.id !== isWritten.id ? p : response.data))
+            setMessage(`${nameObject.name} number changed`)
+            setTimeout(() => {
+              setMessage(null)
+            }, 5000)
+          })
+          .catch(error => {
+            setMessage(`Information of ${nameObject.name} has already been removed from the server`)
+            setTimeout(() => {
+              setMessage(null)
+            }, 5000)
+          })
 
-        //setPersons(changedperson)
+
       }
     }
 
@@ -111,6 +129,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={message} />
       <Filter inputValue={newNameFilter} onChangeValue={handleNameFilterChange} text={"Filter shown with:"} />
       <h2>Add a new person</h2>
       <PersonForm
