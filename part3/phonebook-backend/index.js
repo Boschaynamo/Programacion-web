@@ -36,9 +36,20 @@ app.get('/api/persons', (request, response) => {
 })
 
 app.get('/info', (request, response) => {
-  const date= new Date()
+  const date = new Date()
   const peopleCount = Object.keys(persons).length
   response.send(`<div>Phonebook has info for ${peopleCount}</div> ${date}`)
+})
+
+app.get('/api/persons/:id', (request, response) => {
+  const id = Number(request.params.id)
+  const person = persons.find(person => person.id === id)
+  if (person) {
+    response.json(person)
+  }
+  else {
+    response.status(404).end()
+  }
 })
 
 app.listen(PORT)
