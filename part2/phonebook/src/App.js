@@ -43,8 +43,7 @@ const App = () => {
   useEffect(() => {
     phonebookService
       .getAll()
-      .then(response =>
-        setPersons(response.data))
+      .then(personsResponse => setPersons(personsResponse))
   },
     [])
 
